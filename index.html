@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VolunteerAI — Smart Volunteer Matching</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a73e8;
+    --blue-dark: #1557b0;
+    --blue-light: #e8f0fe;
+    --gold: #f59e0b;
+    --silver: #94a3b8;
+    --bronze: #cd7c45;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --success: #10b981;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(26,115,232,0.08);
+    --shadow-lg: 0 8px 40px rgba(26,115,232,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── HEADER ─────────────────────────── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--blue), #4f8ef7);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--blue);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--text); }
+
+  .header-nav a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .header-nav a:hover {
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  /* ─── HERO ─────────────────────────────── */
+  .hero {
+    text-align: center;
+    padding: 56px 24px 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .hero h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ─── MAIN CARD ─────────────────────────── */
+  main {
+    flex: 1;
+    padding: 0 24px 48px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .card-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+    background: var(--white);
+  }
+
+  textarea::placeholder { color: #a0aec0; font-size: 14px; }
+
+  .char-count {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    padding: 16px;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 14px rgba(26,115,232,0.3);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(26,115,232,0.4);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 14px;
+    padding: 10px 18px;
+  }
+
+  .btn-secondary:hover {
+    background: #d2e3fc;
+  }
+
+  /* ─── SPINNER ─────────────────────────── */
+  .spinner-wrap {
+    display: none;
+    text-align: center;
+    padding: 32px 0;
+  }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--blue-light);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  .spinner-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ─── RESULTS ─────────────────────────── */
+  #results-section { display: none; }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .results-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+  }
+
+  .results-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+  }
+
+  .volunteer-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .volunteer-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .volunteer-card.rank-1 { border-color: var(--gold); animation-delay: 0.05s; }
+  .volunteer-card.rank-2 { border-color: var(--silver); animation-delay: 0.15s; }
+  .volunteer-card.rank-3 { border-color: var(--bronze); animation-delay: 0.25s; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .rank-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .rank-1 .rank-badge { background: #fef3c7; color: var(--gold); }
+  .rank-2 .rank-badge { background: #f1f5f9; color: var(--silver); }
+  .rank-3 .rank-badge { background: #fff7ed; color: var(--bronze); }
+
+  .volunteer-info { flex: 1; }
+
+  .volunteer-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .volunteer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .volunteer-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .skill-tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  .ai-reason {
+    background: linear-gradient(135deg, #f0f7ff, #e8f0fe);
+    border: 1px solid #c5d9f7;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: #1e3a5f;
+    line-height: 1.6;
+  }
+
+  .ai-reason-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--blue);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  /* ─── ERROR ─────────────────────────── */
+  .error-box {
+    display: none;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 16px;
+    color: #dc2626;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+
+  /* ─── FOOTER ─────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    background: var(--white);
+  }
+
+  .footer-badges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .gemini-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ─── ANIMATIONS ─────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ─── RESPONSIVE ─────────────────────── */
+  @media (max-width: 600px) {
+    header { padding: 0 16px; }
+    .hero { padding: 36px 16px 24px; }
+    main { padding: 0 16px 40px; }
+    .card { padding: 22px 18px; }
+    .volunteer-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">🤝</div>
+    <span class="logo-text">Volunteer<span>AI</span></span>
+  </a>
+  <nav class="header-nav">
+    <a href="dashboard.html">📊 Dashboard</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">✨ Powered by Google Gemini AI</div>
+  <h1>Smart Volunteer Matching<br>for <em>Social Impact</em></h1>
+  <p>Describe your NGO task and let AI find the best volunteers from your network — instantly.</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- INPUT SECTION -->
+  <div id="input-section">
+    <div class="card">
+      <div class="card-title">🔍 Find the Right Volunteer</div>
+      <div class="card-subtitle">Describe your task in detail for better matches</div>
+
+      <label for="task-input">Task Description</label>
+      <textarea
+        id="task-input"
+        placeholder="e.g. We need someone to teach basic computer skills to elderly people in South Delhi on weekends"
+        oninput="updateCharCount(this)"
+      ></textarea>
+      <div class="char-count"><span id="char-count">0</span> characters</div>
+
+      <button class="btn btn-primary" id="find-btn" onclick="findVolunteers()">
+        <span>🚀</span> Find Best Volunteers
+      </button>
+
+      <div class="error-box" id="error-box">
+        ⚠️ <span id="error-msg">Something went wrong. Please try again.</span>
+      </div>
+    </div>
+
+    <!-- Spinner -->
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      <div class="spinner-text">Gemini AI is analysing your task…</div>
+    </div>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div id="results-section">
+    <div class="results-header">
+      <div class="results-title">🏆 Top Volunteer Matches</div>
+      <div class="results-meta" id="results-meta">3 matches found</div>
+    </div>
+
+    <div id="volunteer-cards"></div>
+
+    <button class="btn btn-secondary" onclick="searchAgain()" style="width:100%;margin-top:8px;">
+      ← Search Again
+    </button>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-badges">
+    <span class="gemini-badge">✦ Google Gemini AI</span>
+    <span>|</span>
+    <span>HQ Dopamine</span>
+    <span>|</span>
+    <span>Solution Challenge 2026</span>
+  </div>
+  <div>Built with ❤️ for NGOs across India</div>
+</footer>
+
+<script>
+  // ─────────────────────────────────────────────
+  // 🔧 CONFIGURATION — Change this URL when your
+  //    teammate shares the backend URL!
+  // ─────────────────────────────────────────────
+  const BACKEND_URL = "https://volunteer-ai-coordinator.onrender.com";
+  //      ↑ CHANGE THIS LINE when Person 2 shares their URL
+
+  // ─────────────────────────────────────────────
+
+  function updateCharCount(el) {
+    document.getElementById("char-count").textContent = el.value.length;
+  }
+
+  async function findVolunteers() {
+    const task = document.getElementById("task-input").value.trim();
+
+    // Validate input
+    if (!task) {
+      showError("Please describe your task before searching.");
+      return;
+    }
+    if (task.length < 20) {
+      showError("Please give a bit more detail about the task (at least 20 characters).");
+      return;
+    }
+
+    hideError();
+    showSpinner(true);
+    document.getElementById("find-btn").disabled = true;
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/match`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task_description: task })
+      });
+
+      if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+      const data = await response.json();
+      showResults(data.matches || data);
+
+    } catch (err) {
+      console.error(err);
+      // Show DEMO data if backend not connected yet
+      showResults(getDemoData(task));
+    } finally {
+      showSpinner(false);
+      document.getElementById("find-btn").disabled = false;
+    }
+  }
+
+  function showResults(matches) {
+    document.getElementById("input-section").style.display = "none";
+    const resultsSection = document.getElementById("results-section");
+    resultsSection.style.display = "block";
+    document.getElementById("results-meta").textContent = `${matches.length} match${matches.length !== 1 ? "es" : ""} found`;
+
+    const container = document.getElementById("volunteer-cards");
+    container.innerHTML = "";
+    const ranks = ["🥇", "🥈", "🥉"];
+
+    matches.forEach((vol, i) => {
+      const rank = i + 1;
+      const card = document.createElement("div");
+      card.className = `volunteer-card rank-${rank}`;
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="rank-badge">${ranks[i] || rank}</div>
+          <div class="volunteer-info">
+            <div class="volunteer-name">${vol.name}</div>
+            <div class="volunteer-meta">
+              <span>📍 ${vol.location}</span>
+              <span>🕐 ${vol.availability}</span>
+            </div>
+          </div>
+        </div>
+        <div class="skills-row">
+          ${(vol.skills || []).map(s => `<span class="skill-tag">${s}</span>`).join("")}
+        </div>
+        <div class="ai-reason">
+          <div class="ai-reason-label">🤖 Why Gemini recommends</div>
+          ${vol.reason || vol.gemini_reason || "Strong match based on skills and availability."}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function searchAgain() {
+    document.getElementById("results-section").style.display = "none";
+    document.getElementById("input-section").style.display = "block";
+    document.getElementById("task-input").value = "";
+    document.getElementById("char-count").textContent = "0";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function showSpinner(show) {
+    document.getElementById("spinner").style.display = show ? "block" : "none";
+    document.querySelector(".card").style.opacity = show ? "0.5" : "1";
+  }
+
+  function showError(msg) {
+    const box = document.getElementById("error-box");
+    document.getElementById("error-msg").textContent = msg;
+    box.style.display = "block";
+  }
+
+  function hideError() {
+    document.getElementById("error-box").style.display = "none";
+  }
+
+  // Demo data shown when backend isn't connected yet
+  function getDemoData(task) {
+    return [
+      {
+        name: "Priya Sharma",
+        location: "South Delhi",
+        availability: "Weekends",
+        skills: ["Computer Literacy", "Teaching", "Hindi", "Patience"],
+        reason: "Priya has 3 years of experience teaching digital skills to senior citizens and is available on weekends in South Delhi — a perfect match for your task."
+      },
+      {
+        name: "Arjun Mehta",
+        location: "Central Delhi",
+        availability: "Sat mornings",
+        skills: ["MS Office", "Teaching", "English", "Communication"],
+        reason: "Arjun has a background in corporate IT training and volunteers regularly with senior community programs. His clear communication style is ideal."
+      },
+      {
+        name: "Kavya Nair",
+        location: "South Delhi",
+        availability: "Sundays",
+        skills: ["Basic Computing", "Kannada", "Hindi", "Empathy"],
+        reason: "Kavya specialises in patient, step-by-step digital literacy instruction and has worked with elderly groups before — highly recommended."
+      }
+    ];
+  }
+</script>
+</body>
+</html>
